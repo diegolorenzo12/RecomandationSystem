@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import {Providers} from "./providers";
 import "./globals.css";
-
+import Nav from '@/app/components/Nav'
 
 export const metadata: Metadata = {
   title: "Learn Match",
@@ -17,6 +17,7 @@ export default function RootLayout({
     <html lang="en" className="light w-full h-full">
       <body className="w-full h-full">
         <Providers>
+          <Nav/>
           {children}
         </Providers>
       </body>
