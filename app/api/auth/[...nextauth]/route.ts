@@ -26,13 +26,18 @@ const handler = NextAuth({
                     formData.append('username', credentials?.username ?? '');
                     formData.append('password', credentials?.password ?? '');
 
-                    const response = await axios.post('http://localhost:19537/api/Users/login', formData, {
+                    const response = await axios.post('http://localhost:5107/api/Users/login', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         },
                     });
 
                     const user = response.data;
+
+                    if (response.status === 200 && user) {
+                        // Include idUser in the user object
+                        return { ...user, id: user.idUser, userTags: user.userTags };
+                    }
 
                     // If no error and we have user data, return it
                     if (response.status === 200 && user) {
@@ -48,17 +53,60 @@ const handler = NextAuth({
         })
     ],
     callbacks: {
-        async redirect({ url, baseUrl }) {
-           
-            if (url === '/api/auth/signout' || url === '/user') {
-                return `${baseUrl}/user`; // Custom redirect URL after signout
-              }
-            return `${baseUrl}/recomendations`;
-        },
         async signIn({ user, account, profile, email, credentials }) {
-            // Return true to indicate successful sign in
+            if (account?.provider === 'github') {
+                try {
+                    const response = await axios.post('http://localhost:5107/api/Users/githubLogin', {
+                        githubId: profile?.id.toString(),
+                        email: profile?.email,
+                        name: profile?.name
+                    });
+
+                    const dbUser = response.data;
+
+                    if (response.status === 200 && dbUser) {
+                        user.id = dbUser.idUser;
+                        user.userTags = dbUser.userTags;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('GitHub login error:', error);
+                    return false;
+                }
+            }
+
             return true;
+        },
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.userTags = user.userTags;
+                token.hasUserTags = user.userTags && user.userTags.length > 0;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                session.user.id = token.id;
+                session.user.userTags = token.userTags;
+                session.user.hasUserTags = token.hasUserTags;
+            }
+            return session;
+        },
+        async redirect({ url, baseUrl, token }) {
+            if (token?.hasUserTags) {
+                return `${baseUrl}/recomendations`;
+            }
+            return `${baseUrl}/survey`;
         }
+        // async redirect({ url, baseUrl, session }) {
+        //     if (session?.user?.hasUserTags) {
+        //         return `${baseUrl}/recomendations`;
+        //     }
+        //     return `${baseUrl}/survey`;
+        // }
     },
     pages: {
         signIn: '/login', // Customize the sign-in page URL

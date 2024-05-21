@@ -13,21 +13,17 @@ export default function LoginCard() {
 
     const handleLogin = async () => {
         const result = await signIn('credentials', {
-            redirect: false,
+            redirect: true,
             username,
             password,
         });
         if (result?.ok) {
-            router.push('/recomendations');
+            //router.push('/recomendations');
         } else {
             // Handle login failure (e.g., show an error message)
             console.error('Login failed');
         }
       };
-
-    const handleThirdPartyLogin = async (provider: string) => {
-        signIn(provider); // No need for redirect: false here, as NextAuth will handle redirection
-    };
 
 
     if(!emailLogin) {
