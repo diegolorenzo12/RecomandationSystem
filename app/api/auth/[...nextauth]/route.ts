@@ -1,7 +1,8 @@
-import NextAuth from "next-auth"
+import NextAuth, { JWT, Session, User } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
+import { getSession } from "next-auth/react";
 
 const handler = NextAuth({
     providers: [
@@ -79,34 +80,29 @@ const handler = NextAuth({
 
             return true;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, account, profile }) {
             if (user) {
-                token.id = user.id;
-                token.userTags = user.userTags;
-                token.hasUserTags = user.userTags && user.userTags.length > 0;
+              token.id = user.id;
+              token.userTags = user.userTags;
+              token.hasUserTags = user.userTags && user.userTags.length > 0;
             }
             return token;
         },
-        async session({ session, token }) {
+        async session({ session, token, user }) {
             if (token) {
-                session.user.id = token.id;
-                session.user.userTags = token.userTags;
-                session.user.hasUserTags = token.hasUserTags;
+              session.user.id = token.id as string;
+              session.user.userTags = token.userTags as string[];
+              session.user.hasUserTags = token.hasUserTags as boolean;
             }
             return session;
-        },
-        async redirect({ url, baseUrl, token }) {
-            if (token?.hasUserTags) {
-                return `${baseUrl}/recomendations`;
+          },
+          async redirect({ url, baseUrl }) {
+            const session = await getSession();
+            if (session?.user.hasUserTags) {
+              return `${baseUrl}/recomendations`;
             }
             return `${baseUrl}/survey`;
         }
-        // async redirect({ url, baseUrl, session }) {
-        //     if (session?.user?.hasUserTags) {
-        //         return `${baseUrl}/recomendations`;
-        //     }
-        //     return `${baseUrl}/survey`;
-        // }
     },
     pages: {
         signIn: '/login', // Customize the sign-in page URL
