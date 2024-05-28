@@ -17,6 +17,7 @@ export default function Nav(){
                     </div>
                     <div className="header-container flex justify-end items-center space-x-4 max-w-screen-lg text-14px pr-4 text-white font-termina  font-normal">
                         <Link href="/">Home</Link>
+                        <Link href="/create">Create Event</Link>
                         <Link href="/recomendations">Recomendations</Link>
                         {session.user?.image as string ? 
                             
@@ -80,7 +81,7 @@ export default function Nav(){
                 </div>
                 <div className="header-container flex justify-end items-center space-x-4 max-w-screen-lg text-14px pr-4 text-white font-termina  font-normal">
                     <Link href="/">Home</Link>
-                    <Link href="/recomendations">Recomendations</Link>
+                    <Link href="/login">Recomendations</Link>
                 </div>
             </div>
         </div>

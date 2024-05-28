@@ -25,7 +25,6 @@ export default function Survey() {
   const router = useRouter();
   const [activeIndices, setActiveIndices] = useState<number[]>([]);
   const [tags, setTags] = useState<tag[]>([]);
-  const [value, setValue] = React.useState<number>(0);
 
 
   let list = useAsyncList<tag>({
@@ -147,7 +146,7 @@ export default function Survey() {
                         {activeIndices.map(tagId => (
                         <Button
                             key={tagId}
-                            className='bg-blue-500 text-white text-wrap flex-wrap'
+                            className='bg-blue-500 text-white text-wrap flex-wrap flex-shrink-0'
                             onClick={() => handleToggle(tagId)}
                             radius='sm'
                             size='lg'

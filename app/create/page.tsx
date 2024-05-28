@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Card, CardBody, CardHeader, Input, Textarea, Button, ScrollShadow, Autocomplete, AutocompleteSection, AutocompleteItem, Spinner} from '@nextui-org/react';
+import { Card,Image, CardBody, CardHeader, Input, Textarea, Button, ScrollShadow, Autocomplete, AutocompleteSection, AutocompleteItem, Spinner} from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import {useAsyncList} from "@react-stately/data";
@@ -20,9 +20,7 @@ export default function CreateConference() {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
-  const [imagePreview, setImagePreview] = useState('');
   const router = useRouter();
-  const [value, setValue] = useState<string | number>(0);
 
   useEffect(() => {
     async function fetchTags() {
@@ -127,7 +125,12 @@ export default function CreateConference() {
             onChange={(e) => setImageUrl(e.target.value)}
             required
           />
-          {imageUrl && <img src={imageUrl} alt="Preview" className="w-full h-auto mt-4" />}
+          {imageUrl && 
+          <>
+            <Image src={imageUrl} alt="preview" width={240} />
+          </>
+
+          }
           <Input
             type="datetime-local"
             label=""
@@ -156,7 +159,6 @@ export default function CreateConference() {
                 placeholder="Type to search..."
                 variant="faded"
                 onInputChange={list.setFilterText}
-                selectedKey={value}
                 onSelectionChange={(key)=> handleTagChange(Number(key))}
             >
             {(item) => (
@@ -168,11 +170,12 @@ export default function CreateConference() {
           {selectedTags.length>0 &&
           <>
             <label className="text-white w-full my-2">Selected Tags</label>
-            <ScrollShadow className='w-full flex flex-wrap gap-2'>
+            <ScrollShadow orientation='horizontal' className='h-[90px] w-full overflow-x-auto flex flex-nowrap gap-3 flex-row'>
                 {selectedTags.map(tagId => (
                 <Button
                     key={tagId}
-                    className={`px-4 py-2 rounded bg-blue-500 text-white`}
+                    size='md'
+                    className="bg-blue-500 text-white overflow-hidden flex-shrink-0"
                     onClick={() => handleTagChange(tagId)}
                 >
                     {
