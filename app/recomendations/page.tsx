@@ -57,12 +57,10 @@ export default function Recomendations() {
   }
 
   
-
-  
   return (
     <div className="w-full h-full">
       <div className="flex flex-row flex-wrap justify-center items-center w-full">
-        <h1 className="text-4xl font-bold text-center w-full">Recomendaciones</h1>
+        <h1 className="text-4xl font-bold text-center w-full">Recomendations</h1>
         {recomendations.map((rec, index) => (
         <div key={index} className="m-3">
             <RecomendationCard 

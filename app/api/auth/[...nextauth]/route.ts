@@ -57,7 +57,7 @@ const handler = NextAuth({
             if (account?.provider === 'github') {
                 try {
                     const response = await axios.post('http://localhost:5107/api/Users/githubLogin', {
-                        githubId: profile?.id.toString(),
+                        githubId: profile?.id?.toString(),
                         email: profile?.email,
                         name: profile?.name
                     });
