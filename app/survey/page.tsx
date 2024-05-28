@@ -25,10 +25,10 @@ export default function Survey() {
   const router = useRouter();
   const [activeIndices, setActiveIndices] = useState<number[]>([]);
   const [tags, setTags] = useState<tag[]>([]);
-  const [value, setValue] = React.useState<React.Key>("");
+  const [value, setValue] = React.useState<number>(0);
 
 
-  let list = useAsyncList<Tag>({
+  let list = useAsyncList<tag>({
     async load({signal, filterText}) {
         try {
             let res = await fetch(`http://localhost:5107/api/Tags/paginated?name=${filterText}`, { signal });
@@ -85,11 +85,11 @@ export default function Survey() {
   }, [status, session, router]);
 
     const handleSubmit = async ()=>{
-      if(activeIndices.length>0 || session?.user?.id === undefined){
+      if(activeIndices.length>0 && session?.user?.id !== undefined ){
         const formData = new FormData();
 
          // Append the userId
-        formData.append('userId', session?.user?.id.toString());
+        formData.append('userId', session.user.id.toString());
 
         // Append each tagId separately
         activeIndices.forEach(tag => {
@@ -129,9 +129,8 @@ export default function Survey() {
                 items={list.items}
                 label="Search for tags"
                 placeholder="Type to search..."
-                variant="solid"
+                variant="flat"
                 onInputChange={list.setFilterText}
-                selectedKey={value}
                 onSelectionChange={(key)=> handleToggle(Number(key))}
             >
             {(item) => (
