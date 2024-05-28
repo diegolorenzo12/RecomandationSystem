@@ -15,12 +15,14 @@ declare module "next-auth" {
       hasUserTags: boolean;
       email?: string;
       name?: string;
+      image? : string;
     }
   }
 
   interface User {
     id: string;
     userTags: string[];
+    image?: string; 
   }
 
   interface JWT {

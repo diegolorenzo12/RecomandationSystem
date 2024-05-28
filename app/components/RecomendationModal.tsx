@@ -5,7 +5,6 @@ import { useColor } from 'color-thief-react';
 import axios from 'axios';
 import { useSession } from "next-auth/react"
 
-
 interface RecomendationModalProps {
   idConference: number;
   isOpen: boolean;
@@ -17,11 +16,9 @@ interface RecomendationModalProps {
   className?: string;
 }
 
-
-
 export default function RecomendationModal({isOpen, onClose, idConference, imgSrc, title, description, percentage, className }: RecomendationModalProps) {
   const [textColor, setTextColor] = useState('text-white');
-  const [likeColor, setLikeColor] = useState("default")
+  const [likeColor, setLikeColor] = useState<"secondary" | "default" | "primary" | "success" | "warning" | "danger" | undefined>("default")
   const { data: session } = useSession()
 
   const { data, loading, error } = useColor(imgSrc, 'rgbArray', {
@@ -40,8 +37,13 @@ export default function RecomendationModal({isOpen, onClose, idConference, imgSr
 
   const handleAssistir =async ()=>{
     try{
+      if (!session?.user?.id) {
+        console.error('User ID is not available');
+        return;
+      }
+
       const formData = new FormData();
-      formData.append('userId', session?.user?.id.toString());
+      formData.append('userId', session.user.id.toString());
       formData.append('conferenceId', idConference.toString());
       const response = await axios.post('http://localhost:5107/api/Users/AssociateConferenceTags', formData, {
         headers: {

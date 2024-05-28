@@ -22,7 +22,7 @@ export default function CreateConference() {
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [imagePreview, setImagePreview] = useState('');
   const router = useRouter();
-  const [value, setValue] = React.useState<React.Key>("");
+  const [value, setValue] = useState<string | number>(0);
 
   useEffect(() => {
     async function fetchTags() {
