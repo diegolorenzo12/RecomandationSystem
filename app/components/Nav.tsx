@@ -73,7 +73,6 @@ export default function Nav(){
     }
 
     return (
-        
         <div className="mb-14">
             <div className="z-20 header fixed top-0 left-0 right-0 h-16 bg-gray-900 flex justify-between items-center px-4 ">
                 <div className="logo pl-8">

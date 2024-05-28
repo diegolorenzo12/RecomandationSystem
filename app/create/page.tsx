@@ -21,11 +21,16 @@ export default function CreateConference() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const router = useRouter();
+  const [autocompleteValue, setAutocompleteValue] = useState();
 
   useEffect(() => {
     async function fetchTags() {
-      const response = await axios.get('http://localhost:5107/api/Tags/alltags');
-      setTags(response.data);
+      try{
+        const response = await axios.get('http://localhost:5107/api/Tags/alltags');
+        setTags(response.data);
+      }catch(err){
+        console.log(err);
+      }
     }
     fetchTags();
   }, []);
@@ -67,9 +72,26 @@ export default function CreateConference() {
     }
   };
 
+  const handleCreateTag = async (name: string)=>{
+    console.log(name);
+    const newTag = new FormData();
+    newTag.append('tagName', name);
+
+    const response = await axios.post("http://localhost:5107/api/Tags/add", newTag, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+    const data: Tag = response.data;
+    tags.push(data);
+    handleTagChange(data.idTag);
+  }
+
   let list = useAsyncList<Tag>({
     async load({signal, filterText}) {
         try {
+
             let res = await fetch(`http://localhost:5107/api/Tags/paginated?name=${filterText}`, { signal });
             let json = await res.json();
     
@@ -150,23 +172,30 @@ export default function CreateConference() {
             onChange={(e) => setLocation(e.target.value)}
             required
           />
-          <Autocomplete
-                className="text-white"
-                inputValue={list.filterText}
-                isLoading={list.isLoading}
-                items={list.items}
-                label="Search for tags"
-                placeholder="Type to search..."
-                variant="faded"
-                onInputChange={list.setFilterText}
-                onSelectionChange={(key)=> handleTagChange(Number(key))}
+          <div className="flex items-center gap-2 w-full">
+            <Autocomplete
+              className="text-white flex-grow"
+              inputValue={list.filterText}
+              isLoading={list.isLoading}
+              items={list.items}
+              label="Search for tags"
+              placeholder="Type to search..."
+              variant="faded"
+              allowsCustomValue
+              onInputChange={list.setFilterText}
+              onSelectionChange={(key) => handleTagChange(Number(key))}
             >
-            {(item) => (
+              {(item) => (
                 <AutocompleteItem key={item.idTag}>
-                    {item.name}
+                  {item.name}
                 </AutocompleteItem>
+              )}
+            </Autocomplete>
+            {list.items.length === 0 && list.filterText && (
+              <Button onPress={()=>handleCreateTag(list.filterText)}>Create "{list.filterText}"</Button>
             )}
-        </Autocomplete>
+          </div>
+          
           {selectedTags.length>0 &&
           <>
             <label className="text-white w-full my-2">Selected Tags</label>
