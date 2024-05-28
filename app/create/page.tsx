@@ -192,7 +192,7 @@ export default function CreateConference() {
               )}
             </Autocomplete>
             {list.items.length === 0 && list.filterText && (
-              <Button onPress={()=>handleCreateTag(list.filterText)}>Create "{list.filterText}"</Button>
+              <Button onPress={()=>handleCreateTag(list.filterText)}>Create &quot;{list.filterText}&quot;</Button>
             )}
           </div>
           
